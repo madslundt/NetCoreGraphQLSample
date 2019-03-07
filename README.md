@@ -8,6 +8,7 @@ Some of the  dependencies are:
  - CorrelationId: Add Correlation ID to Http context to easier track errors.
  - FluentAssertions: Better and easier assertions in tests.
  - FluentValidation: Validating requests before they are handled.
+ - GraphQL: GraphQL for .NET.
  - Hangfire: Background worker.
  - Identityserver4: OpenID Connect and OAuth 2.0 framework.
  - MediatR: Dispatching request/response, commands, queries, notifications and events.
@@ -31,10 +32,12 @@ Some of the  dependencies are:
 
  ### API
  API is structured by having each feature in a single file. That gives the following structure:
-  - Controllers: All the controllers with endpoints exposed.
+  - GraphQLController: The only controller handling our GraphQL requests.
   - Features: All features (eg. User/GetUser.cs).
-  - Infrastructure: Infrastructure for the application it self (eg. Middlewares, Filters, Pipeline).
+  - Infrastructure: Infrastructure for the application it self (eg. Middlewares, Filters, Pipeline, GraphQL).
   - ThirdParty: Third party services (eg. Facebook login).
+
+[GraphQL IDE](https://github.com/prisma/graphql-playground)
 
 ## Setting up application
 The application require 2 databases - one for the application it self and one for Hangfire.
