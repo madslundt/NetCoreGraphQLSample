@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,18 +7,16 @@ using GraphQL;
 using GraphQL.Http;
 using GraphQL.Instrumentation;
 using GraphQL.Types;
-using GraphQL.Validation.Complexity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API
+namespace API.GraphQL
 {
-    [Route("api/[controller]")]
+    [Route("api/graphql")]
     public class GraphQLController : Controller
     {
         private readonly ISchema _schema;
         private readonly IDocumentExecuter _executer;
         private readonly IDocumentWriter _writer;
-        private readonly IDictionary<string, string> _namedQueries;
 
         public GraphQLController(
             IDocumentExecuter executer,
@@ -29,32 +26,26 @@ namespace API
             _executer = executer;
             _writer = writer;
             _schema = schema;
+        }
 
-            _namedQueries = new Dictionary<string, string>
-            {
-                ["a-query"] = @"query foo { hero { name } }"
-            };
+        [HttpGet]
+        public Task<HttpResponseMessage> GetAsync(HttpRequestMessage request)
+        {
+            return PostAsync(request, new GraphQLRequest { Query = "query user { id }", Variables = null });
         }
 
         [HttpPost]
         public async Task<HttpResponseMessage> PostAsync(HttpRequestMessage request, GraphQLRequest query)
         {
             var inputs = query.Variables.ToInputs();
-            var queryToExecute = query.Query;
-
-            if (!string.IsNullOrWhiteSpace(query.NamedQuery))
-            {
-                queryToExecute = _namedQueries[query.NamedQuery];
-            }
 
             var result = await _executer.ExecuteAsync(_ =>
             {
                 _.Schema = _schema;
-                _.Query = queryToExecute;
+                _.Query = query.Query;
                 _.OperationName = query.OperationName;
                 _.Inputs = inputs;
 
-                _.ComplexityConfiguration = new ComplexityConfiguration { MaxDepth = 15 };
                 _.FieldMiddleware.Use<InstrumentFieldsMiddleware>();
 
             }).ConfigureAwait(false);

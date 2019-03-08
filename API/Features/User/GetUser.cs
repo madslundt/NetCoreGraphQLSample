@@ -54,6 +54,12 @@ namespace API.Features.User
 
             public async Task<Result> Handle(Query message, CancellationToken cancellationToken)
             {
+                return new Result
+                {
+                    Id = message.Id,
+                    FirstName = "Firstname",
+                    LastName = "Lastname"
+                };
                 var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == message.Id);
 
                 if (user is null)

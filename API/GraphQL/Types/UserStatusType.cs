@@ -1,7 +1,7 @@
 ﻿using DataModel.Models;
 using GraphQL.Types;
 
-namespace API.Types
+namespace API.GraphQL.Types
 {
     public class UserStatusType : ObjectGraphType<UserStatusRef>
     {

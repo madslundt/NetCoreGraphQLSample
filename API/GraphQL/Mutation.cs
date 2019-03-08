@@ -1,14 +1,14 @@
 ﻿using API.Features.User;
-using API.Types;
+using API.GraphQL.Types;
 using DataModel.Models;
 using GraphQL.Types;
 using MediatR;
 
-namespace API
+namespace API.GraphQL
 {
-    public class Mutations : ObjectGraphType
+    public class Mutation : ObjectGraphType
     {
-        public Mutations(IMediator mediator)
+        public Mutation(IMediator mediator)
         {
             Field<UserType, CreateUser.Result>()
                 .Name("user")

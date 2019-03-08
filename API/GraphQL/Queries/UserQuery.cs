@@ -1,14 +1,14 @@
 ﻿using API.Features.User;
-using API.Types;
+using API.GraphQL.Types;
 using GraphQL.Types;
 using MediatR;
 using System;
 
-namespace API
+namespace API.GraphQL.Queries
 {
-    public class Queries : ObjectGraphType
+    public class UserQuery : ObjectGraphType
     {
-        public Queries(IMediator mediator)
+        public UserQuery(IMediator mediator)
         {
             FieldAsync<UserType>(
                 name: "user",

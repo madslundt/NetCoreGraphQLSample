@@ -1,10 +1,9 @@
-﻿using API.Infrastructure.GraphQL;
-using DataModel.Models;
+﻿using DataModel.Models;
 using GraphQL.Types;
 
-namespace API.Types
+namespace API.GraphQL.Types
 {
-    public class UserType : GraphQLType<User>
+    public class UserType : ObjectGraphType<User>
     {
         public UserType()
         {

@@ -25,8 +25,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StructureMap;
-using Swashbuckle.AspNetCore.Swagger;
-using System.IO;
+using GQL = GraphQL;
+using GraphQL.Http;
+using GraphQL.Types;
+using GraphQL.Server;
+using GraphQL.Server.Ui.Playground;
 
 namespace API
 {
@@ -55,7 +58,21 @@ namespace API
             services.AddAutoMapper(typeof(Startup));
 
             services.AddMediatR(typeof(Startup));
-            
+
+            services.AddSingleton<GQL.IDocumentExecuter, GQL.DocumentExecuter>();
+            services.AddSingleton<IDocumentWriter, DocumentWriter>();
+
+            services.AddSingleton<GQL.IDependencyResolver>(s => new GQL.FuncDependencyResolver(s.GetRequiredService));
+            services.AddSingleton<ISchema, Schema>();
+
+            _ = services.AddGraphQL(o =>
+              {
+                  o.ExposeExceptions = true;
+                  o.ComplexityConfiguration = new GQL.Validation.Complexity.ComplexityConfiguration { MaxDepth = 15 };
+              })
+            .AddGraphTypes(ServiceLifetime.Singleton);
+
+
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringKeys.App)));
             
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(ConnectionStringKeys.Hangfire)));
@@ -78,23 +95,6 @@ namespace API
             services.AddMetricsEndpoints();
             services.AddMetricsReportingHostedService();
 
-
-            // Swagger
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info
-                {
-                    Version = "v1",
-                    Title = "API",
-                    Description = "API v1",
-                    TermsOfService = "None",
-                });
-                c.CustomSchemaIds(x => x.FullName);
-
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
 
             // Pipeline
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(MetricsProcessor<,>));
@@ -197,28 +197,23 @@ namespace API
             app.UseMetricsAllEndpoints();
             app.UseMetricsAllMiddleware();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
-            });
+            //app.UseHangfireServer(new BackgroundJobServerOptions
+            //{
+            //    SchedulePollingInterval = TimeSpan.FromSeconds(30),
+            //    ServerCheckInterval = TimeSpan.FromMinutes(1),
+            //    ServerName = $"{Environment.MachineName}.{Guid.NewGuid()}",
+            //    WorkerCount = Environment.ProcessorCount * 5
+            //});
 
-            app.UseHangfireServer(new BackgroundJobServerOptions
-            {
-                SchedulePollingInterval = TimeSpan.FromSeconds(30),
-                ServerCheckInterval = TimeSpan.FromMinutes(1),
-                ServerName = $"{Environment.MachineName}.{Guid.NewGuid()}",
-                WorkerCount = Environment.ProcessorCount * 5
-            });
-
-            app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            {
-                IsReadOnlyFunc = (DashboardContext context) => true,
-                Authorization = new[] { new MyAuthorizationFilter() }
-            });
+            //app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            //{
+            //    IsReadOnlyFunc = (DashboardContext context) => true,
+            //    Authorization = new[] { new MyAuthorizationFilter() }
+            //});
             app.UseAuthentication();
 
-            app.UseMvc();
+            app.UseGraphQL<Schema>();
+            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
         }
 
         public class MyAuthorizationFilter : IDashboardAuthorizationFilter

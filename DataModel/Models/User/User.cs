@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 
 namespace DataModel.Models
 {
@@ -13,6 +14,8 @@ namespace DataModel.Models
 
         public UserStatus Status { get; set; } = UserStatus.WaitingConfirmation;
         public UserStatusRef UserStatusRef { get; set; }
+
+        public ICollection<Comment> Comments { get; set; }
 
         public DateTime Created { get; set; } = DateTime.UtcNow;
     }
