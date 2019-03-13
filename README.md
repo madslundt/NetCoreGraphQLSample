@@ -1,4 +1,4 @@
-# NetCoreMediatrSample
+# WIP NetCoreMediatrSample
 Sample using Command and Query Responsibility Segregation (CQRS) implemented in .NET Core by using MediatR and identityserver4, background workers, real-time metrics, monitoring, logging, validations, swagger and more
 
 Some of the  dependencies are:
