@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Data;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 
-namespace API.Features.User
+namespace Features.User
 {
     public class CreateUser
     {

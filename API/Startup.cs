@@ -30,6 +30,10 @@ using GraphQL.Http;
 using GraphQL.Types;
 using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
+using GraphQL;
+using Microsoft.AspNetCore.Http;
+using Features;
+using API.GraphQL;
 
 namespace API
 {
@@ -59,11 +63,11 @@ namespace API
 
             services.AddMediatR(typeof(Startup));
 
-            services.AddSingleton<GQL.IDocumentExecuter, GQL.DocumentExecuter>();
-            services.AddSingleton<IDocumentWriter, DocumentWriter>();
+            // GraphQL
+            services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
 
-            services.AddSingleton<GQL.IDependencyResolver>(s => new GQL.FuncDependencyResolver(s.GetRequiredService));
-            services.AddSingleton<ISchema, Schema>();
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+            services.AddSingleton<IDocumentWriter, DocumentWriter>();
 
             _ = services.AddGraphQL(o =>
               {
@@ -71,6 +75,9 @@ namespace API
                   o.ComplexityConfiguration = new GQL.Validation.Complexity.ComplexityConfiguration { MaxDepth = 15 };
               })
             .AddGraphTypes(ServiceLifetime.Singleton);
+            services.AddSingleton<ISchema, Schemas>();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringKeys.App)));
@@ -191,29 +198,38 @@ namespace API
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
                 app.UseDatabaseErrorPage();
+
+                app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
             }
+
+            app.UseMiddleware<GraphQLMiddleware>(new GraphQLSettings
+            {
+                BuildUserContext = ctx => new GraphQLUserContext
+                {
+                    User = ctx.User
+                }
+            });
 
             app.UseStaticFiles();
             app.UseMetricsAllEndpoints();
             app.UseMetricsAllMiddleware();
 
-            //app.UseHangfireServer(new BackgroundJobServerOptions
-            //{
-            //    SchedulePollingInterval = TimeSpan.FromSeconds(30),
-            //    ServerCheckInterval = TimeSpan.FromMinutes(1),
-            //    ServerName = $"{Environment.MachineName}.{Guid.NewGuid()}",
-            //    WorkerCount = Environment.ProcessorCount * 5
-            //});
+            app.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                SchedulePollingInterval = TimeSpan.FromSeconds(30),
+                ServerCheckInterval = TimeSpan.FromMinutes(1),
+                ServerName = $"{Environment.MachineName}.{Guid.NewGuid()}",
+                WorkerCount = Environment.ProcessorCount * 5
+            });
 
-            //app.UseHangfireDashboard("/hangfire", new DashboardOptions
-            //{
-            //    IsReadOnlyFunc = (DashboardContext context) => true,
-            //    Authorization = new[] { new MyAuthorizationFilter() }
-            //});
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                IsReadOnlyFunc = (DashboardContext context) => true,
+                Authorization = new[] { new MyAuthorizationFilter() }
+            });
             app.UseAuthentication();
 
             app.UseGraphQL<Schema>();
-            app.UseGraphQLPlayground(new GraphQLPlaygroundOptions());
         }
 
         public class MyAuthorizationFilter : IDashboardAuthorizationFilter

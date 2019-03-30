@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using API.Features.User;
+using Features.User;
 using AutoFixture;
 using FluentAssertions;
 using FluentValidation;

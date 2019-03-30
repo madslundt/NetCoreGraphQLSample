@@ -7,7 +7,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Features.User
+namespace Features.User
 {
     public class GetUser
     {
@@ -46,9 +46,8 @@ namespace API.Features.User
             private readonly DatabaseContext _db;
             private readonly IMapper _mapper;
 
-            public GetUserHandler(DatabaseContext db, IMapper mapper)
+            public GetUserHandler(IMapper mapper)
             {
-                _db = db;
                 _mapper = mapper;
             }
 

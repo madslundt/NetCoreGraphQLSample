@@ -1,12 +1,13 @@
-﻿using DataModel.Models;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 
-namespace API.GraphQL.Types
+namespace Features.User.Types
 {
-    public class UserType : ObjectGraphType<User>
+    public class UserType : ObjectGraphType<DataModel.Models.User>
     {
         public UserType()
         {
+            Name = "User";
+
             Field(x => x.Id, type: typeof(IdGraphType)).Description($"ID of {Name}");
             Field(x => x.FirstName).Description($"First name of {Name}");
             Field(x => x.LastName).Description($"Last name of {Name}");

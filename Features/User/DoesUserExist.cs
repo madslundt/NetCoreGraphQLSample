@@ -7,7 +7,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Features.User
+namespace Features.User
 {
     public class DoesUserExist
     {

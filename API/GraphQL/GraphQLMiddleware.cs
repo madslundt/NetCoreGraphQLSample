@@ -1,15 +1,17 @@
-﻿using GraphQL;
-using GraphQL.Http;
-using GraphQL.Types;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Features;
+using GraphQL;
+using GraphQL.Http;
+using GraphQL.Types;
+using GraphQL.Validation;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
-namespace API.Infrastructure.GraphQL
+namespace API.GraphQL
 {
     public class GraphQLMiddleware
     {
@@ -54,11 +56,11 @@ namespace API.Infrastructure.GraphQL
             var result = await _executer.ExecuteAsync(_ =>
             {
                 _.Schema = schema;
-                _.Query = request.Query;
-                _.OperationName = request.OperationName;
-                _.Inputs = request.Variables.ToInputs();
+                _.Query = request?.Query;
+                _.OperationName = request?.OperationName;
+                _.Inputs = request?.Variables.ToInputs();
                 _.UserContext = _settings.BuildUserContext?.Invoke(context);
-                //_.ValidationRules = DocumentValidator.CoreRules().Concat(new[] { new InputValidationRule() });
+                _.ValidationRules = DocumentValidator.CoreRules().Concat(new[] { new InputValidationRule() });
             });
 
             await WriteResponseAsync(context, result);
@@ -66,7 +68,7 @@ namespace API.Infrastructure.GraphQL
 
         private async Task WriteResponseAsync(HttpContext context, ExecutionResult result)
         {
-            var json = _writer.Write(result);
+            var json = await _writer.WriteToStringAsync(result);
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = result.Errors?.Any() == true ? (int)HttpStatusCode.BadRequest : (int)HttpStatusCode.OK;
