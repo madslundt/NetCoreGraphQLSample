@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Net;
 using CorrelationId;
-using FluentValidation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -19,10 +18,6 @@ namespace API.Infrastructure.Filter
             if (ex is ArgumentNullException)
             {
                 return HttpStatusCode.NotFound;
-            }
-            else if (ex is ValidationException)
-            {
-                return HttpStatusCode.BadRequest;
             }
             else if (ex is UnauthorizedAccessException)
             {

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Features.User;
 using AutoFixture;
+using Features.User;
 using FluentAssertions;
-using FluentValidation;
 using UnitTest.Common;
 using Xunit;
 
@@ -11,39 +11,34 @@ namespace UnitTest.Features.User
 {
     public class GetUserTest : TestBase
     {
-        [Fact]
-        public async Task ThrowValidationExceptionWhenIdIsEmpty()
-        {
-            var query = _fixture.Build<GetUser.Query>()
-                .With(x => x.Id, Guid.Empty)
-                .Create();
+        private readonly IUserContext _userContext;
 
-            await Assert.ThrowsAsync<ValidationException>(() => _mediator.Send(query));
+        public GetUserTest()
+        {
+            _userContext = new UserContext(_db);
         }
 
         [Fact]
-        public async Task ThrowValidationExceptionWhenIdIsMissing()
+        public async Task ThrowValidationExceptionWhenIdIsEmpty()
         {
-            var query = _fixture.Build<GetUser.Query>()
-                .Without(x => x.Id)
-                .Create();
+            var userId = Guid.Empty;
 
-            await Assert.ThrowsAsync<ValidationException>(() => _mediator.Send(query));
+            await Assert.ThrowsAsync<ValidationException>(() => _userContext.GetUser(userId));
         }
 
         [Fact]
         public async Task GetUserWhenProvidingAValidId()
         {
-            var query = _fixture.Build<GetUser.Query>()
+            var userId = _fixture.Build<Guid>()
                 .Create();
 
             _db.Users.Add(new DataModel.Models.User
             {
-                Id = query.Id
+                Id = userId
             });
             _db.SaveChanges();
 
-            var result = await _mediator.Send(query);
+            var result = await _userContext.GetUser(userId);
 
             result.Should().NotBeNull();
         }

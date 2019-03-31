@@ -1,14 +1,9 @@
 ﻿using System;
-using API;
-using API.Infrastructure.Pipeline;
 using AutoFixture;
-using AutoMapper;
 using DataModel;
-using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -19,7 +14,6 @@ namespace UnitTest.Common
 {
     public class TestBase : IDisposable
     {
-        protected readonly IMediator _mediator;
         protected readonly DatabaseContext _db;
         protected readonly Mock<IBackgroundJobClient> _jobClientMock;
         protected readonly Fixture _fixture;
@@ -29,10 +23,7 @@ namespace UnitTest.Common
             var services = new ServiceCollection();
 
             // Services
-            services.AddMediatR();
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            services.AddMvc().AddFluentValidation(cfg => { cfg.RegisterValidatorsFromAssemblyContaining<Startup>(); });
-            services.AddAutoMapper();
+            services.AddMvc();
 
 
             // Database
@@ -54,8 +45,6 @@ namespace UnitTest.Common
                 cfg.For(typeof(ILogger<>)).Use(typeof(NullLogger<>));
                 cfg.Populate(services);
             });
-
-            _mediator = container.GetInstance<IMediator>();
         }
 
         public void Dispose()

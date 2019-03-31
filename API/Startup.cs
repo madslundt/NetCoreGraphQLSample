@@ -4,18 +4,12 @@ using System.Reflection;
 using App.Metrics;
 using App.Metrics.Reporting.InfluxDB;
 using API.Infrastructure.Filter;
-using API.Infrastructure.MessageQueue;
-using API.Infrastructure.Pipeline;
-using AutoMapper;
 using CorrelationId;
 using DataModel;
 using DataModel.Models;
-using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.Dashboard;
 using IdentityServer4.AccessTokenValidation;
-using MediatR;
-using MediatR.Pipeline;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -34,6 +28,7 @@ using GraphQL;
 using Microsoft.AspNetCore.Http;
 using Features;
 using API.GraphQL;
+using Features.User;
 
 namespace API
 {
@@ -59,10 +54,6 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(Startup));
-
-            services.AddMediatR(typeof(Startup));
-
             // GraphQL
             services.AddSingleton<IDependencyResolver>(s => new FuncDependencyResolver(s.GetRequiredService));
 
@@ -81,7 +72,7 @@ namespace API
 
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringKeys.App)));
-            
+
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(ConnectionStringKeys.Hangfire)));
 
             services.AddCorrelationId();
@@ -102,18 +93,14 @@ namespace API
             services.AddMetricsEndpoints();
             services.AddMetricsReportingHostedService();
 
+            // Context
+            services.AddSingleton<IUserContext, Features.User.UserContext>();
 
             // Pipeline
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(MetricsProcessor<,>));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
-
             services.AddMvc(opt => { opt.Filters.Add(typeof(ExceptionFilter)); })
                 .AddMetrics()
                 .AddControllersAsServices()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddFluentValidation(cfg => { cfg.RegisterValidatorsFromAssemblyContaining<Startup>(); });
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Identity
             var identityOptions = new Infrastructure.Identity.IdentityOptions();
@@ -147,9 +134,6 @@ namespace API
             {
                 config.Populate(services);
             });
-
-            var mediator = container.GetInstance<IMediator>();
-            GlobalConfiguration.Configuration.UseMediatR(mediator);
 
             metrics.ReportRunner.RunAllAsync();
 
