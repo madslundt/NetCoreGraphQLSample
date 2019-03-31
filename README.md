@@ -4,38 +4,26 @@ Sample using Command and Query Responsibility Segregation (CQRS) implemented in 
 Some of the  dependencies are:
  - App.Metrics: Real time metrics and monitoring set up with InfluxDb and Grafana.
  - AutoFixture: Auto generate test objects.
- - AutoMapper: Eliminate a lot of boilerplate by auto mapping objects (eg. request and response).
  - CorrelationId: Add Correlation ID to Http context to easier track errors.
  - FluentAssertions: Better and easier assertions in tests.
- - FluentValidation: Validating requests before they are handled.
  - GraphQL: GraphQL for .NET.
  - Hangfire: Background worker.
  - Identityserver4: OpenID Connect and OAuth 2.0 framework.
- - MediatR: Dispatching request/response, commands, queries, notifications and events.
  - Microsoft.EntityFrameworkCore: Object-relational mapping.
  - Microsoft.Extensions.Logging: Logging API that allow other providers.
  - Moq: Mocking framework used for testing.
  - Sentry.io: Logging provider
  - StructureMap: IoC Container.
- - Swagger: API documentation page
  - Xunit: Testing framework.
 
  Running on .NET Core 2.2
  
- See my project [knowledge-quiz-api](https://github.com/madslundt/knowledge-quiz-api) for real-world usage.
- 
  ## Structure
-  - API: Source of the application.
+  - API: Core hosting functionality.
+  - Features: Business logic including GraphQL queries and mutations.
   - DataModel: Models for the database/store.
   - UnitTest: Unit tests for the application.
   - IDP: Identity Provider using Identityserver4.
-
- ### API
- API is structured by having each feature in a single file. That gives the following structure:
-  - GraphQLController: The only controller handling our GraphQL requests.
-  - Features: All features (eg. User/GetUser.cs).
-  - Infrastructure: Infrastructure for the application it self (eg. Middlewares, Filters, Pipeline, GraphQL).
-  - ThirdParty: Third party services (eg. Facebook login).
 
 [GraphQL IDE](https://github.com/prisma/graphql-playground)
 
