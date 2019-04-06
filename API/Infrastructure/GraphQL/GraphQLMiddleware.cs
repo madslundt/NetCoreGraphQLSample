@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using API.GraphQL;
 using GraphQL;
 using GraphQL.Http;
+using GraphQL.Instrumentation;
 using GraphQL.Types;
 using GraphQL.Validation;
 using Microsoft.AspNetCore.Http;
@@ -51,6 +52,7 @@ namespace API.Infrastructure.GraphQL
 
         private async Task ExecuteAsync(HttpContext context, ISchema schema)
         {
+            var start = DateTime.UtcNow;
             var request = Deserialize<GraphQLRequest>(context.Request.Body);
 
             var result = await _executer.ExecuteAsync(_ =>
@@ -59,11 +61,14 @@ namespace API.Infrastructure.GraphQL
                 _.Query = request?.Query;
                 _.OperationName = request?.OperationName;
                 _.Inputs = request?.Variables.ToInputs();
+                _.EnableMetrics = true;
                 _.UserContext = _settings.BuildUserContext?.Invoke(context);
                 _.ValidationRules = DocumentValidator.CoreRules().Concat(new[] { new InputValidationRule() });
             });
 
             await WriteResponseAsync(context, result);
+
+            result.EnrichWithApolloTracing(start);
         }
 
         private async Task WriteResponseAsync(HttpContext context, ExecutionResult result)
