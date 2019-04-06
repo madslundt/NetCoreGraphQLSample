@@ -13,7 +13,6 @@ using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,9 +25,9 @@ using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using GraphQL;
 using Microsoft.AspNetCore.Http;
-using Features;
-using API.GraphQL;
 using Features.User;
+using API.Infrastructure.GraphQL;
+using Microsoft.EntityFrameworkCore;
 
 namespace API
 {
@@ -66,7 +65,7 @@ namespace API
                   o.ComplexityConfiguration = new GQL.Validation.Complexity.ComplexityConfiguration { MaxDepth = 15 };
               })
             .AddGraphTypes(ServiceLifetime.Singleton);
-            services.AddSingleton<ISchema, Schemas>();
+            services.AddSingleton<ISchema, GraphQL.Schemas>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

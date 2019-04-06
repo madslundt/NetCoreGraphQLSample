@@ -6,8 +6,6 @@ namespace Features.User.Types
     {
         public UserType()
         {
-            Name = "User";
-
             Field(x => x.Id, type: typeof(IdGraphType)).Description($"ID of {Name}");
             Field(x => x.FirstName).Description($"First name of {Name}");
             Field(x => x.LastName).Description($"Last name of {Name}");

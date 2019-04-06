@@ -17,6 +17,12 @@ namespace Features.User
 
         public async Task<DataModel.Models.User> GetUser(Guid userId)
         {
+            return await Task.FromResult<DataModel.Models.User>(new DataModel.Models.User
+            {
+                Id = userId,
+                FirstName = "Hehe",
+                LastName = "hehe2"
+            });
             var query = from user in _db.Users
                         where user.Id == userId
                         select user;

@@ -1,18 +1,15 @@
-﻿using Features.User;
-using Features.User.Types;
+﻿using Features.User.Types;
 using GraphQL.Types;
 using System;
 
-namespace Features
+namespace Features.User
 {
-    public class Queries : ObjectGraphType
+    public class UserQuery : ObjectGraphType
     {
-        public Queries(IUserContext userContext)
+        public UserQuery(IUserContext userContext)
         {
-            Name = "Query";
-
             FieldAsync<UserType>(
-                name: "user",
+                name: "find",
                 arguments: new QueryArguments(
                     new QueryArgument<IdGraphType> { Name = "userId" }
                 ),

@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Features;
+using API.GraphQL;
 using GraphQL;
 using GraphQL.Http;
 using GraphQL.Types;
@@ -11,7 +11,7 @@ using GraphQL.Validation;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace API.GraphQL
+namespace API.Infrastructure.GraphQL
 {
     public class GraphQLMiddleware
     {

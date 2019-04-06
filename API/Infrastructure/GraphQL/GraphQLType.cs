@@ -1,6 +1,6 @@
 ﻿using GraphQL.Types;
 
-namespace API.GraphQL
+namespace API.Infrastructure.GraphQL
 {
     public abstract class GraphQLType<T> : ObjectGraphType<T> 
     {
