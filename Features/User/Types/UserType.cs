@@ -9,7 +9,7 @@ namespace Features.User.Types
             Field(x => x.Id, type: typeof(IdGraphType)).Description($"ID of {Name}");
             Field(x => x.FirstName).Description($"First name of {Name}");
             Field(x => x.LastName).Description($"Last name of {Name}");
-            Field(x => x.Status, type: typeof(ListGraphType<UserStatusType>)).Description($"Status of {Name}");
+            Field(x => x.Status, type: typeof(UserStatusType)).Description($"Status of {Name}");
         }
     }
 }

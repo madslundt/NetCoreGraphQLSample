@@ -69,6 +69,9 @@ namespace API
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            // Contexts
+            services.AddSingleton<IUserContext, Features.User.UserContext>();
+
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringKeys.App)));
 
@@ -91,9 +94,6 @@ namespace API
             services.AddMetricsTrackingMiddleware();
             services.AddMetricsEndpoints();
             services.AddMetricsReportingHostedService();
-
-            // Context
-            services.AddSingleton<IUserContext, Features.User.UserContext>();
 
             // Pipeline
             services.AddMvc(opt => { opt.Filters.Add(typeof(ExceptionFilter)); })

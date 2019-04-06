@@ -15,6 +15,11 @@ namespace Features.User
                 ),
                 resolve: async context => await userContext.GetUser(context.GetArgument<Guid>("userId"))
             );
+
+            Field<ListGraphType<UserStatusType>>(
+                name: "statuses",
+                resolve: _ => userContext.GetUserStatuses()
+            );
         }
     }
 }
