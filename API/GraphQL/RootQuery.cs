@@ -3,9 +3,9 @@ using GraphQL.Types;
 
 namespace API.GraphQL
 {
-    public class Query : ObjectGraphType
+    public class RootQuery : ObjectGraphType
     {
-        public Query()
+        public RootQuery()
         {
             Name = "Query";
 

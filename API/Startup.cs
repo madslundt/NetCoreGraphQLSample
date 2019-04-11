@@ -24,9 +24,9 @@ using GraphQL.Server;
 using GraphQL.Server.Ui.Playground;
 using GraphQL;
 using Microsoft.AspNetCore.Http;
-using Features.User;
 using API.Infrastructure.GraphQL;
 using Microsoft.EntityFrameworkCore;
+using API.GraphQL;
 
 namespace API
 {
@@ -58,19 +58,15 @@ namespace API
             services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
             services.AddSingleton<IDocumentWriter, DocumentWriter>();
 
-            _ = services.AddGraphQL(o =>
+            services.AddGraphQL(o =>
               {
                   o.ExposeExceptions = true;
                   o.ComplexityConfiguration = new GQL.Validation.Complexity.ComplexityConfiguration { MaxDepth = 15 };
               })
             .AddGraphTypes(ServiceLifetime.Singleton);
-            services.AddSingleton<ISchema, GraphQL.Schemas>();
+            services.AddSingleton<ISchema, RootSchema>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            // Contexts
-            services.AddSingleton<IUserContext, Features.User.UserContext>();
-
 
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringKeys.App)));
 

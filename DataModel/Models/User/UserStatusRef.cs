@@ -5,6 +5,9 @@
         public UserStatus Id { get; private set; }
         public string Name { get; private set; }
 
+        public UserStatusRef()
+        {}
+
         public UserStatusRef(UserStatus userStatus)
         {
             Id = userStatus;

@@ -3,9 +3,9 @@ using GraphQL.Types;
 
 namespace API.GraphQL
 {
-    public class Mutation : ObjectGraphType
+    public class RootMutation : ObjectGraphType
     {
-        public Mutation()
+        public RootMutation()
         {
             Name = "Mutation";
 
