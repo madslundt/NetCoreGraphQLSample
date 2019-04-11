@@ -27,7 +27,7 @@ Running on .NET Core 2.2
 - UnitTest: Unit tests for the application.
 - IDP: Identity Provider using Identityserver4.
 
-[GraphQL IDE](https://github.com/prisma/graphql-playground)
+GraphQL playground ui is included once running in development mode. Just go to http://localhost:5000/ui/playground
 
 ## Setting up application
 
