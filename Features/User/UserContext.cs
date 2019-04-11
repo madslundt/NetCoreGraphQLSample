@@ -35,12 +35,12 @@ namespace Features.User
             return result;
         }
 
-        public async Task<DataModel.Models.User> CreateUser(string firstName, string lastName)
+        public async Task<DataModel.Models.User> CreateUser((string firstName, string lastName) input)
         {
             var user = new DataModel.Models.User
             {
-                FirstName = firstName,
-                LastName = lastName
+                FirstName = input.firstName,
+                LastName = input.lastName
             };
 
             _db.Users.Add(user);

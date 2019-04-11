@@ -9,7 +9,7 @@ namespace Features.User
         public UserQuery(IUserContext userContext)
         {
             FieldAsync<UserType>(
-                name: "user",
+                name: "find",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "userId" }
                 ),

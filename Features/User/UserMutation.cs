@@ -1,5 +1,6 @@
 ﻿using DataModel;
 using Features.User.Types;
+using Features.User.Types.Inputs;
 using GraphQL.Types;
 using System;
 
@@ -10,12 +11,15 @@ namespace Features.User
         public UserMutation(IUserContext userContext)
         {
             FieldAsync<NonNullGraphType<UserType>>(
-                name: "user",
+                name: "create",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "firstName" },
-                    new QueryArgument<NonNullGraphType<StringGraphType>> { Name = "lastName" }
+                    new QueryArgument<NonNullGraphType<CreateUserInputType>> { Name = "input" }
                 ),
-                resolve: async context => await userContext.CreateUser(context.GetArgument<string>("firstName"), context.GetArgument<string>("lastName"))
+                resolve: async context => {
+                    var user = context.GetArgument<DataModel.Models.User>("input");
+
+                    return await userContext.CreateUser((firstName: user.FirstName, lastName: user.LastName));
+                }
             );
         }
     }

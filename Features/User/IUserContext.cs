@@ -8,6 +8,6 @@ namespace Features.User
     {
         Task<DataModel.Models.User> GetUser(Guid userId);
         ICollection<(int Id, string Name)> GetUserStatuses();
-        Task<DataModel.Models.User> CreateUser(string firstName, string lastName);
+        Task<DataModel.Models.User> CreateUser((string firstName, string lastName) input);
     }
 }
