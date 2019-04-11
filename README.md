@@ -6,6 +6,7 @@ Some of the dependencies are:
 
 - App.Metrics: Real time metrics and monitoring set up with InfluxDb and Grafana.
 - AutoFixture: Auto generate test objects.
+- FluentAssertions: Better and easier assertions in tests.
 - GraphQL: GraphQL for .NET.
 - Hangfire: Background worker.
 - Identityserver4: OpenID Connect and OAuth 2.0 framework.
