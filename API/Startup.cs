@@ -4,7 +4,6 @@ using System.Reflection;
 using App.Metrics;
 using App.Metrics.Reporting.InfluxDB;
 using API.Infrastructure.Filter;
-using CorrelationId;
 using DataModel;
 using DataModel.Models;
 using Hangfire;
@@ -76,8 +75,6 @@ namespace API
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(Configuration.GetConnectionString(ConnectionStringKeys.App)));
 
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString(ConnectionStringKeys.Hangfire)));
-
-            services.AddCorrelationId();
 
             services.AddOptions();
 
@@ -171,10 +168,6 @@ namespace API
             IHostingEnvironment env,
             ILoggerFactory loggerFactory)
         {
-            app.UseCorrelationId(new CorrelationIdOptions
-            {
-                UseGuidForCorrelationId = true
-            });
 
             if (env.IsDevelopment())
             {

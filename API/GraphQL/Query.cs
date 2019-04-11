@@ -9,7 +9,7 @@ namespace API.GraphQL
         {
             Name = "Query";
 
-            Field<UserQuery>("user", resolve: context => new { });
+            Field<NonNullGraphType<UserQuery>>("user", resolve: context => new { });
         }
     }
 }

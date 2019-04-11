@@ -28,11 +28,26 @@ namespace Features.User
             return result;
         }
 
-        public ICollection<UserStatusRef> GetUserStatuses()
+        public ICollection<(int Id, string Name)> GetUserStatuses()
         {
-            var result = Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>().Select(userStatus => new UserStatusRef(userStatus)).ToArray();
+            var result = Enum.GetValues(typeof(UserStatus)).Cast<UserStatus>().Select(userStatus => ((int)userStatus, userStatus.ToString())).ToList();
 
             return result;
+        }
+
+        public async Task<DataModel.Models.User> CreateUser(string firstName, string lastName)
+        {
+            var user = new DataModel.Models.User
+            {
+                FirstName = firstName,
+                LastName = lastName
+            };
+
+            _db.Users.Add(user);
+
+            await _db.SaveChangesAsync();
+
+            return user;
         }
     }
 }

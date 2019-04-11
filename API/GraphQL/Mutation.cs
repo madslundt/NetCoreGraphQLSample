@@ -9,7 +9,7 @@ namespace API.GraphQL
         {
             Name = "Mutation";
 
-            Field<UserMutation>("user", resolve: context => new { });
+            Field<NonNullGraphType<UserMutation>>("user", resolve: context => new { });
         }
     }
 }

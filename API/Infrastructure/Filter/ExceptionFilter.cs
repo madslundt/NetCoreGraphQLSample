@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Net;
-using CorrelationId;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -34,16 +33,13 @@ namespace API.Infrastructure.Filter
         }
 
         private readonly IHostingEnvironment _env;
-        private readonly ICorrelationContextAccessor _correlationContext;
         private readonly ILogger _logger;
 
         public ExceptionFilter(
             IHostingEnvironment env,
-            ICorrelationContextAccessor correlationContext,
             ILogger<ExceptionFilter> logger)
         {
             _env = env;
-            _correlationContext = correlationContext;
             _logger = logger;
         }
 
@@ -54,7 +50,6 @@ namespace API.Infrastructure.Filter
                 var content = new Dictionary<string, object>
                 {
                     { "ErrorMessage", context.Exception.Message },
-                    { "CorrelationId", _correlationContext.CorrelationContext.CorrelationId }
                 };
 
                 if (_env.IsDevelopment())
@@ -77,7 +72,6 @@ namespace API.Infrastructure.Filter
             var logTitle = $"{context.HttpContext.Request.Path} :: [{statusCode}] {context.Exception.Message}";
             var logError = new
             {
-                CorrelationId = _correlationContext.CorrelationContext.CorrelationId,
                 Context = context,
             };
 

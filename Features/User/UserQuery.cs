@@ -11,12 +11,12 @@ namespace Features.User
             FieldAsync<UserType>(
                 name: "user",
                 arguments: new QueryArguments(
-                    new QueryArgument<IdGraphType> { Name = "userId" }
+                    new QueryArgument<NonNullGraphType<IdGraphType>> { Name = "userId" }
                 ),
                 resolve: async context => await userContext.GetUser(context.GetArgument<Guid>("userId"))
             );
 
-            Field<ListGraphType<UserStatusType>>(
+            Field<NonNullGraphType<ListGraphType<NonNullGraphType<UserStatusType>>>>(
                 name: "statuses",
                 resolve: _ => userContext.GetUserStatuses()
             );
