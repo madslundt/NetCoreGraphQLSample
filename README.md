@@ -1,13 +1,11 @@
 # WIP NetCoreMediatrSample
 
-Sample using Command and Query Responsibility Segregation (CQRS) implemented in .NET Core by using MediatR and identityserver4, background workers, real-time metrics, monitoring, logging, validations, swagger and more
+Sample using GraphQL implemented in .NET Core by using MediatR and identityserver4, background workers, real-time metrics, monitoring, logging and more
 
 Some of the dependencies are:
 
 - App.Metrics: Real time metrics and monitoring set up with InfluxDb and Grafana.
 - AutoFixture: Auto generate test objects.
-- CorrelationId: Add Correlation ID to Http context to easier track errors.
-- FluentAssertions: Better and easier assertions in tests.
 - GraphQL: GraphQL for .NET.
 - Hangfire: Background worker.
 - Identityserver4: OpenID Connect and OAuth 2.0 framework.
@@ -48,15 +46,6 @@ Real time metrics require Grafana and InfluxDb.
 ## Logging
 
 Logging is set up with Microsoft.Extensions.Logging which means you can add logging providers by your self to it.
-As now it is set up as follow:
-
-- Status codes 5xx, that are caused by an exception, are logged as critical.
-- Other status codes, that are caused by an exception, are logged as warning.
-- The whole pipeline (request to response) is logged as information.
-
-Critical and warning logs are named `<endpoint> :: [<status code>] <exception message>` and contain request, stacktrace and correlation id.
-
-The user receives error message and correlation id in production. For development environment the stack trace is also included.
 
 Sentry.io logging provider has been added to the project. This can be used or removed.
 
