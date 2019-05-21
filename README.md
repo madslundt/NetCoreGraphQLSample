@@ -1,4 +1,4 @@
-# WIP NetCoreMediatrSample
+# NetCoreMediatrSample
 
 Sample using GraphQL implemented in .NET Core by using MediatR and identityserver4, background workers, real-time metrics, monitoring, logging and more
 
